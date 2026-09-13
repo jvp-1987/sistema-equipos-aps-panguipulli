@@ -202,7 +202,6 @@ export default function CargaMasivaRepuestos({ open, onClose, onComplete, provee
       let lista = [];
       if (Array.isArray(extract.output)) lista = extract.output;
       else if (extract.output?.repuestos) lista = extract.output.repuestos;
-      else if (Array.isArray(extract.output)) lista = extract.output;
 
       // Validar y normalizar
       const validados = [];

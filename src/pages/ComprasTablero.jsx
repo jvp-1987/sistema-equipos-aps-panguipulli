@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { base44 } from "@/api/base44Client";
 import {
-  ShoppingCart, CheckCircle2, Package, Loader2, RefreshCw, User,
+  ShoppingCart, Loader2, RefreshCw, User,
   Wrench, Calendar, Building2, DollarSign, FileDown, Warehouse, ClipboardList,
 } from "lucide-react";
 import { generarPDFSolicitudRepuesto } from "@/utils/generarPDFSolicitudRepuesto";

@@ -35,7 +35,7 @@ export default function EquipoDetalleModal({ equipo, parches, onClose, onEdit, o
       const kms = await base44.entities.Kilometraje.filter({ equipo_id: equipo.id }, "-created_date", 50);
       const activo = kms.find(r => !r.km_final);
       if (activo?.conductor) conductorActivo = activo.conductor;
-    } catch (_) {}
+    } catch { /* dato opcional: si no se puede leer, se ignora */ }
     generarPDFEquipo({ equipo: { ...equipo, conductor_responsable: conductorActivo }, actividades, parches });
   };
   const estado = ESTADOS_EQUIPO.find(e => e.value === equipo.estado) || ESTADOS_EQUIPO[0];
@@ -911,7 +911,7 @@ function InspeccionCard({ act }) {
         if (match?.datos_json) {
           setInspeccionData(JSON.parse(match.datos_json));
         }
-      } catch (_) {}
+      } catch { /* dato opcional: si no se puede leer, se ignora */ }
       setLoadingData(false);
     }
   };
@@ -1965,7 +1965,7 @@ function InformeExternoCard({ equipo, user, onUpdated }) {
         equipo_id: equipo.id,
       });
       setDriveOk(true);
-    } catch (_) {}
+    } catch { /* dato opcional: si no se puede leer, se ignora */ }
     setSubiendoDrive(false);
     setGuardando(false);
     onUpdated && onUpdated();

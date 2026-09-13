@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { getCentrosEstructura } from "@/lib/centros";
-import { Shield, Wrench, Stethoscope, ChevronDown, ChevronUp, Check, X, Clock } from "lucide-react";
+import { Shield, Wrench, Stethoscope, ChevronDown, ChevronUp } from "lucide-react";
 import { ROLES, roleLabel, esRolTaller, esSuperAdmin, esRolSalud, rolesQuePuedeCrear } from "@/lib/roles";
 
 const ROLE_COLORS = {

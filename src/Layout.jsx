@@ -1,13 +1,13 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { base44 } from "@/api/base44Client";
 import { Heart, Menu, X, LogOut } from "lucide-react";
-import { getNavItemsForRole } from "@/lib/navPermissions";
+import { getNavItemsForRole, paginaFueraDelRol, rutaInicialDelRol } from "@/lib/navPermissions";
 import MobileNav from "@/components/MobileNav";
 import RoleSimulator from "@/components/RoleSimulator";
 import { getEffectiveNavRole } from "@/lib/roleSimulator";
-import { roleLabel, ROLES } from "@/lib/roles";
+import { roleLabel } from "@/lib/roles";
 import { useAuth } from "@/lib/AuthContext";
 import { useToast } from "@/components/ui/use-toast";
 import useInactivityLogout from "@/hooks/useInactivityLogout";
@@ -42,25 +42,23 @@ export default function Layout({ children, currentPageName }) {
   const visibleItems = userLoading ? [] : getNavItemsForRole(effectiveRole);
   const navigate = useNavigate();
 
-  // Redirigir al Monitor Corporativo a usuarios con rol exclusivo de visualización
-  // (solo aplica al rol real, no a la simulación del super_admin).
+  // Ninguna pantalla del menú de otro rol se abre escribiendo su URL.
   //
-  // Antes rebotaba desde CUALQUIER pantalla distinta del Monitor, incluidas las
-  // que su propia navegación le ofrece: "Reportes" aparecía en su menú y al
-  // hacer clic volvía al Monitor, así que el rol quedaba encerrado en una sola
-  // pantalla de KPIs. Ahora solo se rebota lo que su rol no tiene permitido —
-  // la lista sale de la misma matriz de navegación, para que menú y acceso no
-  // puedan volver a contradecirse.
-  const paginasPermitidasMonitor = useMemo(
-    () => new Set(getNavItemsForRole(ROLES.MONITOR_CORPORATIVO).map(i => i.page)),
-    []
-  );
-
+  // Esto reemplaza al rebote que antes existía solo para el Monitor
+  // Corporativo. La regla es la misma que tenía ese rol, aplicada a todos:
+  // si la pantalla es ítem de menú de ALGÚN rol pero no del que la abre, se
+  // rebota al primer ítem de su propio menú. Las pantallas que no son ítem de
+  // menú (el detalle de una OT, el Dashboard, Centros) no entran en la regla:
+  // se llega a ellas desde dentro de otras pantallas.
+  //
+  // Va por el rol EFECTIVO, así "Simular Rol" muestra el mismo bloqueo que
+  // vería la persona simulada, en vez de una versión más permisiva.
   useEffect(() => {
-    if (user?.role === ROLES.MONITOR_CORPORATIVO && !paginasPermitidasMonitor.has(currentPageName)) {
-      navigate("/MonitorCorporativo", { replace: true });
+    if (userLoading || !user) return;
+    if (paginaFueraDelRol(effectiveRole, currentPageName)) {
+      navigate(rutaInicialDelRol(effectiveRole), { replace: true });
     }
-  }, [user, currentPageName, navigate, paginasPermitidasMonitor]);
+  }, [user, userLoading, effectiveRole, currentPageName, navigate]);
 
   // Escuchar cambios del simulador para refrescar la nav
   const [, forceUpdate] = useState(0);
