@@ -70,6 +70,9 @@ export const NAV_ITEMS = [
 const ROLE_ORDER = {
   [ROLES.ENCARGADO_COMPRAS_TALLER]: ["ComprasTablero"],
   [ROLES.ENCARGADO_COMPRAS_SALUD]: ["ComprasSaludTablero"],
+  // Su pantalla principal es el Monitor; en el orden general quedaba despues
+  // de Reportes, y ese orden decide tambien a donde se lo manda de vuelta.
+  [ROLES.MONITOR_CORPORATIVO]: ["MonitorCorporativo"],
 };
 
 export function getNavItemsForRole(role) {
@@ -80,4 +83,34 @@ export function getNavItemsForRole(role) {
     ...priority.map(page => items.find(i => i.page === page)).filter(Boolean),
     ...items.filter(i => !priority.includes(i.page)),
   ];
+}
+// ── Acceso por ruta ─────────────────────────────────────────────────────────
+// El menú oculta los enlaces, pero ocultar no es bloquear: escribiendo la URL
+// se llegaba igual a Auditoría, Configuración o los tableros de compras desde
+// cualquier rol. La base los frena (las policies de 03_policies.sql filtran las
+// filas), así que no se filtraban datos, pero la pantalla se abría con su
+// cabecera y sus botones — el mismo tipo de confusión que ya generaba el rol
+// simulado aterrizando en la pantalla de otro perfil.
+//
+// La regla se saca de esta misma matriz, para que menú y acceso no puedan
+// contradecirse: si una pantalla es ítem de menú de ALGÚN rol pero no del rol
+// que la abre, se rebota. Las pantallas que no son ítem de menú (el detalle de
+// una orden de trabajo, el Dashboard, Centros) quedan fuera de la regla: se
+// llega a ellas desde dentro de otras pantallas y cada una controla lo suyo.
+const PAGINAS_DE_MENU = new Set(NAV_ITEMS.map((i) => i.page));
+
+/** ¿Esta pantalla pertenece al menú de otro rol y no al de este? */
+export function paginaFueraDelRol(role, page) {
+  // Base del Sistema entra a todo: hay dos pantallas del mecanico que no
+  // figuran en su menu y no tiene sentido cerrarselas al rol de maxima
+  // autoridad. Para VER el sistema como otro perfil esta "Simular Rol", que
+  // cambia el rol efectivo y con el, este bloqueo.
+  if (role === ROLES.SUPER_ADMIN) return false;
+  if (!page || !PAGINAS_DE_MENU.has(page)) return false;
+  return !getNavItemsForRole(role).some((i) => i.page === page);
+}
+
+/** Primer ítem del menú del rol: a dónde se lo manda cuando se lo rebota. */
+export function rutaInicialDelRol(role) {
+  return getNavItemsForRole(role)[0]?.path || "/";
 }

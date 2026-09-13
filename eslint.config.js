@@ -35,6 +35,15 @@ export default [
       "unused-imports": pluginUnusedImports,
     },
     rules: {
+      // El objeto `rules` de abajo pisaba por completo al de
+      // pluginJs.configs.recommended que trae el spread de arriba, asi que
+      // ninguna de sus reglas llegaba a correr. Entre ellas `no-undef`, la
+      // que detecta usar un identificador que nadie importo: por eso un
+      // `PERMISOS is not defined` pudo llegar a produccion y romper la
+      // pantalla de detalle de una orden de trabajo sin que el lint dijera
+      // nada. Se reincorporan explicitamente.
+      ...pluginJs.configs.recommended.rules,
+      "no-undef": "error",
       "no-unused-vars": "off",
       "react/jsx-uses-vars": "error",
       "react/jsx-uses-react": "error",

@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { CheckCircle, Bell, Plus, X, Loader2, Mail, Send, ClipboardList, FileText } from "lucide-react";
-import { differenceInDays, parseISO } from "date-fns";
 import { useAuth } from "@/lib/AuthContext";
 
 const NIVEL_CONFIG = {

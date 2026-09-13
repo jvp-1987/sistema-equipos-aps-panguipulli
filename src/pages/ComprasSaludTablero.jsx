@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { base44 } from "@/api/base44Client";
 import {
-  Heart, ShoppingCart, CheckCircle2, Package, Loader2, RefreshCw, User,
+  Heart, ShoppingCart, Loader2, RefreshCw, User,
   Calendar, Building2, DollarSign, Warehouse, ClipboardList, Plus, Stethoscope,
 } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";

@@ -36,7 +36,7 @@ export default function OrdenTrabajoCard({ ot, onActualizar, onEditar, puedeCerr
     tiempoAgo = ot.created_date
       ? formatDistanceToNow(new Date(ot.created_date), { addSuffix: true, locale: es })
       : "";
-  } catch {}
+  } catch { /* dato opcional: si no se puede leer, se ignora */ }
 
   const cambiarEstado = async (nuevoEstado) => {
     setCambiando(true);

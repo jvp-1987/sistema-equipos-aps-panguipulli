@@ -44,7 +44,7 @@ export default function ImprimirHistorialModal({ equipo, actividades, onClose })
             || null;
         }
         let datos = null;
-        try { datos = pendiente?.datos_json ? JSON.parse(pendiente.datos_json) : null; } catch (_) {}
+        try { datos = pendiente?.datos_json ? JSON.parse(pendiente.datos_json) : null; } catch { /* dato opcional: si no se puede leer, se ignora */ }
 
         const hasFallas = act.observaciones?.includes("Fallas:");
         const resultadoMatch = act.observaciones?.match(/Resultado:\s*(aprobado|observaciones|rechazado)/i);
